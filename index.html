@@ -41,6 +41,8 @@ canvas{width:100%;height:100%;display:block}
 
 /* --- Fondo del juego --- */
 main{background:#14102a var(--fondo) center/cover no-repeat}
+@media (orientation:landscape){main{background-size:100% 100%}}
+header button svg{width:1.2em;height:1.2em;display:block}
 /* --- Portada --- */
 #cover{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:0 16px max(4vh,env(safe-area-inset-bottom,0px));background:#14102a;cursor:pointer}
 #cover::after{content:"";position:absolute;inset:0;z-index:-1;background:var(--portada) center/contain no-repeat}
@@ -68,8 +70,8 @@ main{background:#14102a var(--fondo) center/cover no-repeat}
   </label>
   <label><input id="mus" type="checkbox" checked> Música</label>
   <label><input id="click" type="checkbox"> Pulso</label>
-  <button id="home" title="Volver a la portada" aria-label="Volver a la portada">🏠</button>
-  <button id="fs" title="Pantalla completa" aria-label="Pantalla completa">⛶</button>
+  <button id="home" title="Volver a la portada" aria-label="Volver a la portada"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button>
+  <button id="fs" title="Pantalla completa" aria-label="Pantalla completa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></svg></button>
   <button id="mybtn">Mi melodía</button>
   <button id="restart">Reiniciar</button>
   <button class="go" id="play">▶ Empezar</button>
