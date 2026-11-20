@@ -85,6 +85,9 @@ body.duo main{grid-column:1/3}
   <label>Canción
     <select id="song"></select>
   </label>
+  <label id="vozl" style="display:none">Voz
+    <select id="voz"><option value="b">Flauta + xilófono</option><option value="f">Solo flauta</option><option value="x">Solo xilófono</option></select>
+  </label>
   <label>Velocidad
     <input id="bpm" type="range" min="40" max="130" value="70" aria-label="Velocidad">
     <span id="bpmv">70</span>
@@ -149,12 +152,17 @@ const DUOS={'Dúo: flauta y xilófono (original)':{
  x:'2/1 4/1 2/1 2/1 3/1 3/1 2/1 2/1 0/1 0/1 6/1 6/1 4/1 2/1 4/1 2/1 2/1 4/1 4/1 4/1 2/1 4/1 2/1 4/1 3/1 5/1 3/1 5/1 4/1 2/1 4/1 4/1 2/1 4/1 2/1 2/1 3/1 3/1 2/1 2/1 0/1 0/1 6/1 6/1 4/1 2/1 0/2'}};
 for(const k in SONGS){const o=document.createElement('option');o.textContent=k;$('song').appendChild(o)}
 for(const k in DUOS){const o=document.createElement('option');o.textContent=k;$('song').appendChild(o)}
+let instKeep=null;
 function load(){
   notes=[];let s=0;
   const nm=$('song').value;
-  duo=!!DUOS[nm];
-  if(duo){
-    for(const v of ['f','x']){let q=0;DUOS[nm][v].split(' ').forEach(p=>{const[a,b]=p.split('/'),d=+b;if(a!=='r')notes.push({n:+a,s:q,d,v});q+=d;s=Math.max(s,q)})}
+  const isD=!!DUOS[nm],sv=isD?$('voz').value:'b';
+  $('vozl').style.display=isD?'':'none';
+  duo=isD&&sv==='b';
+  if(isD&&sv!=='b'){if(instKeep===null)instKeep=$('inst').value;$('inst').value=sv}
+  else if(instKeep!==null){$('inst').value=instKeep;instKeep=null}
+  if(isD){
+    for(const v of (sv==='b'?['f','x']:[sv])){let q=0;DUOS[nm][v].split(' ').forEach(p=>{const[a,b]=p.split('/'),d=+b;if(a!=='r')notes.push(sv==='b'?{n:+a,s:q,d,v}:{n:+a,s:q,d});q+=d;s=Math.max(s,q)})}
     notes.sort((a,b)=>a.s-b.s);
   }else SONGS[nm].split(' ').forEach(p=>{const[a,b]=p.split('/'),d=+b;if(a==='r'){s+=d;return}notes.push({n:+a,s,d});s+=d});
   total=s;prepNotes();document.body.classList.toggle('duo',duo);layout();reset();size();
@@ -387,6 +395,7 @@ $('play').onclick=()=>{
 $('restart').onclick=reset;
 $('fs').onclick=()=>{try{const p=document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();p&&p.catch(()=>{})}catch(e){}};
 $('song').onchange=load;
+$('voz').onchange=()=>load();
 $('mybtn').onclick=()=>{$('mine').hidden=!$('mine').hidden};
 function addSong(name,str){
   SONGS[name]=str;
