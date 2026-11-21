@@ -324,6 +324,11 @@ main #toast{z-index:6;background:#160b48f0;border:3px solid var(--gold);border-r
 #intro .iprov{position:absolute;z-index:9;left:10px;top:10px;padding:3px 10px;border-radius:8px;border:2px dashed #ffffff88;background:#0008;color:#fff;font:700 .8rem sans-serif;letter-spacing:.05em}
 #iskip{position:absolute;z-index:9;right:18px;bottom:18px;padding:.5em 1.4em;border-radius:999px;font-size:1.2rem;background:#ffffffe0;color:var(--navy);box-shadow:0 0 0 3px var(--navy),0 5px 0 var(--navy)}
 #iskip::after{content:"";display:inline-block;margin-left:10px;border:7px solid transparent;border-left:10px solid var(--navy);border-right:0;vertical-align:-1px}
+#intro .igate{position:absolute;inset:0;z-index:8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:radial-gradient(circle,#2a1677cc,#05021aee)}
+#intro .igate[hidden]{display:none}
+#igo{font-size:clamp(1.5rem,4.5vw,2.6rem);padding:.4em 1.4em;border-radius:999px;background:linear-gradient(#ffd75a,#ffb81c);color:#3a2400;box-shadow:0 0 0 4px #fff,0 8px 0 var(--navy),0 0 40px #ffc83d88;animation:pulse 1.6s ease-in-out infinite}
+#igo::before{content:"";display:inline-block;margin-right:.45em;border-left:.75em solid currentColor;border-top:.45em solid transparent;border-bottom:.45em solid transparent;vertical-align:-.05em}
+#intro .igate small{color:#cfc6ff;font-weight:700;font-size:1.05rem}
 
 /* ===== móvil: vertical (≤640 px de ancho) y horizontal (≤500 px de alto) ===== */
 #rot{display:none}
@@ -378,6 +383,7 @@ main #toast{z-index:6;background:#160b48f0;border:3px solid var(--gold);border-r
 <div class="icrowd"></div><div class="ig"></div><div class="is"></div><div class="inotes"></div>
 <div class="iflash"></div><div class="ilogo"></div>
 <p class="icap"></p>
+<div class="igate"><button id="igo" class="go">Toca para empezar</button><small>Sube el volumen</small></div>
 <span class="iprov">PROVISIONAL · <b>E1</b></span>
 <button id="iskip">Saltar</button>
 </div>
@@ -1415,27 +1421,72 @@ $('presume').onclick=()=>$('play').click();
 $('prestart').onclick=()=>{reset();$('play').click()};
 $('psong').onclick=()=>{reset();catOpen()};
 
-/* ===== Cinemática de inicio: 20 segundos, se salta con el botón, Esc, Enter o la barra ===== */
+/* ===== Cinemática de inicio: «Toca para empezar» (el navegador no deja sonar nada sin un toque),
+   luego 20 segundos con música. Se salta con el botón, Esc, Enter o la barra ===== */
 (function(){
   const I=$('intro');if(!I)return;
-  const cap=I.querySelector('.icap'),prov=I.querySelector('.iprov b'),beams=I.querySelectorAll('.beams i'),notesBox=I.querySelector('.inotes');
-  const T=[],NN=['Do','Re','Mi','Fa','Sol','La','Si',"Do'"];let done=false,beatI=0;
+  const cap=I.querySelector('.icap'),prov=I.querySelector('.iprov b'),beams=I.querySelectorAll('.beams i'),notesBox=I.querySelector('.inotes'),gate=I.querySelector('.igate');
+  const T=[],NN=['Do','Re','Mi','Fa','Sol','La','Si',"Do'"];let done=false,started=false,beatI=0,M=null;
   function at(ms,f){T.push(setTimeout(f,ms))}
   function say(t){cap.classList.remove('on');if(t)at(250,()=>{cap.textContent=t;cap.classList.add('on')})}
   function shot(n,code,text){I.className='s'+n;prov.textContent=code;say(text)}
   function note(left){const k=Math.floor(Math.random()*8),s=document.createElement('span');s.textContent=NN[k];s.style.background=COLORS[k];s.style.color='#1a1240';s.style.left=left+'%';s.style.setProperty('--dx',(Math.random()*30-15)+'vw');s.style.setProperty('--r',(Math.random()*40-20)+'deg');notesBox.appendChild(s);setTimeout(()=>s.remove(),2500)}
-  function end(){if(done)return;done=true;T.forEach(clearTimeout);clearInterval(beatI);I.classList.add('out');setTimeout(()=>{I.hidden=true;notesBox.innerHTML=''},500);$('enter').focus()}
-  // Guion
-  shot(1,'E1','Es la noche del gran concierto…');
-  [700,1200,1700,2200,2700].forEach((ms,i)=>at(ms,()=>beams[i].classList.add('on')));
-  at(3500,()=>shot(2,'E2','El público está esperando.'));
-  at(6500,()=>shot(3,'E3','Guido llega con su flauta…'));
-  at(9500,()=>shot(4,'E4','…y Sol, con su xilófono.'));
-  at(12500,()=>{shot(5,'E5','¡Que empiece la música!');let b=0;beatI=setInterval(()=>{I.classList.toggle('b',b++%2===0);note(18+Math.random()*12);note(62+Math.random()*14)},320)});
-  at(16500,()=>{clearInterval(beatI);shot(6,'E6','')});
-  at(19500,end);
-  $('iskip').onclick=e=>{e.stopPropagation();end()};
-  addEventListener('keydown',e=>{if(done)return;if(['Escape','Enter','Space'].includes(e.code)){e.preventDefault();e.stopImmediatePropagation();end()}},true);
+  function end(){if(done)return;done=true;T.forEach(clearTimeout);clearInterval(beatI);
+    if(M){try{const n=ac.currentTime;M.gain.cancelScheduledValues(n);M.gain.setValueAtTime(M.gain.value,n);M.gain.linearRampToValueAtTime(0,n+.4)}catch(e){}}
+    I.classList.add('out');setTimeout(()=>{I.hidden=true;notesBox.innerHTML=''},500);$('enter').focus()}
+  // ---------- Banda sonora (sintetizada, sin archivos) ----------
+  const F=n=>440*Math.pow(2,(n-69)/12); // número MIDI → hercios
+  function music(ctx){
+    if(ctx)ac=ctx;
+    ac=ac||new (window.AudioContext||window.webkitAudioContext)();ac.resume&&ac.state!=='running'&&ac.resume&&ac.resume();
+    const t0=ac.currentTime+.08;M=ac.createGain();M.gain.value=.6;const cp=ac.createDynamicsCompressor();cp.threshold.value=-14;cp.ratio.value=6;M.connect(cp).connect(ac.destination);
+    const nb=ac.createBuffer(1,ac.sampleRate*2,ac.sampleRate),nd=nb.getChannelData(0);for(let i=0;i<nd.length;i++)nd[i]=Math.random()*2-1;
+    function osc(type,f,s,len,vol,att,dest,detune){const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.value=f;if(detune)o.detune.value=detune;g.gain.setValueAtTime(0,t0+s);g.gain.linearRampToValueAtTime(vol,t0+s+(att||.01));g.gain.exponentialRampToValueAtTime(.0004,t0+s+len);o.connect(g).connect(dest||M);o.start(t0+s);o.stop(t0+s+len+.05);return o}
+    function noise(s,len,vol,type,fq,q,att){const src=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();src.buffer=nb;src.loop=true;f.type=type;f.frequency.value=fq;f.Q.value=q||1;g.gain.setValueAtTime(0,t0+s);g.gain.linearRampToValueAtTime(vol,t0+s+(att||.005));g.gain.exponentialRampToValueAtTime(.0004,t0+s+len);src.connect(f).connect(g).connect(M);src.start(t0+s);src.stop(t0+s+len+.05);return {f,g}}
+    function kick(s,v){const o=ac.createOscillator(),g=ac.createGain();o.frequency.setValueAtTime(140,t0+s);o.frequency.exponentialRampToValueAtTime(45,t0+s+.18);g.gain.setValueAtTime(v,t0+s);g.gain.exponentialRampToValueAtTime(.001,t0+s+.3);o.connect(g).connect(M);o.start(t0+s);o.stop(t0+s+.35)}
+    const snare=(s,v)=>noise(s,.18,v,'bandpass',1900,.8);
+    const hat=(s,v)=>noise(s,.05,v,'highpass',7000,.7);
+    function flute(m,s,len,v){const o=osc('sine',F(m),s,len,v,.04);const o2=osc('sine',F(m)*2,s,len,v*.18,.04);const lfo=ac.createOscillator(),lg=ac.createGain();lfo.frequency.value=5.5;lg.gain.value=F(m)*.006;lfo.connect(lg);lg.connect(o.frequency);lfo.start(t0+s);lfo.stop(t0+s+len)}
+    function bell(m,s,v){osc('sine',F(m),s,.9,v,.004);osc('sine',F(m)*3.9,s,.25,v*.3,.004)}
+    // 1 · La noche (0–3,5 s): acorde grave que crece y un golpe por cada foco
+    [48,55,60].forEach(m=>{osc('triangle',F(m),0,19,.05,2.5);osc('triangle',F(m),0,19,.03,2.5,null,7)});
+    [.7,1.2,1.7,2.2,2.7].forEach(s=>{kick(s,.5);noise(s,.25,.18,'lowpass',900)});
+    // 2 · El público (3,5–6,5 s): murmullo que sube y pulso suave
+    const crowd=noise(3.4,16,.12,'bandpass',700,.5,1.5);crowd.g.gain.setValueAtTime(.12,t0+12.5);crowd.g.gain.linearRampToValueAtTime(.2,t0+16.5);crowd.g.gain.exponentialRampToValueAtTime(.0004,t0+19.8);
+    for(let s=3.5;s<16.5;s+=.5){kick(s,s<6.5?.35:.55);if(s>=6.5)hat(s+.25,.06)}
+    for(let s=9.5;s<16.5;s+=1)snare(s+.5,.22);
+    // 3 · Guido (6,5–9,5 s): la flauta toca «Mi Mi Fa Sol Sol Fa Mi Re»
+    [76,76,77,79,79,77,76,74].forEach((m,i)=>flute(m,6.5+i*.375,.34,.16));
+    // 4 · Sol (9,5–12,5 s): el xilófono responde en arpegios
+    [72,76,79,84,79,76,72,76,79,84,88,84].forEach((m,i)=>bell(m,9.5+i*.25,.13));
+    // 5 · ¡A tocar! (12,5–16,5 s): los dos juntos
+    const mel=[[72,.5],[74,.5],[76,.5],[77,.5],[79,1],[79,1],[81,.5],[79,.5],[77,.5],[76,.5],[74,1],[72,1]];
+    let s=12.5;for(const [m,d] of mel){flute(m,s,d*.9,.15);s+=d*.5}
+    [[60,64],[65,69],[60,64],[67,71],[60,64],[65,69],[67,71],[67,71]].forEach((c,i)=>c.forEach(m=>bell(m+12,12.5+i*.5,.07)));
+    // subida antes del logo
+    const r=noise(15.4,1.2,.15,'bandpass',400,2,1.1);r.f.frequency.setValueAtTime(400,t0+15.4);r.f.frequency.exponentialRampToValueAtTime(6000,t0+16.5);
+    // 6 · El logo (16,5 s): gran acorde, platillo y ovación
+    kick(16.5,.9);noise(16.5,2.6,.25,'highpass',5000,.5);
+    [60,64,67,72,76].forEach(m=>{osc('sawtooth',F(m),16.5,3,.035,.02);osc('triangle',F(m),16.5,3,.05,.02)});
+    [72,76,79,84].forEach((m,i)=>bell(m+12,16.5+i*.08,.1));
+  }
+  window.__introMusic=music;
+  // ---------- Guion ----------
+  function start(){if(started||done)return;started=true;gate.hidden=true;try{music()}catch(e){}
+    shot(1,'E1','Es la noche del gran concierto…');
+    [700,1200,1700,2200,2700].forEach((ms,i)=>at(ms,()=>beams[i].classList.add('on')));
+    at(3500,()=>shot(2,'E2','El público está esperando.'));
+    at(6500,()=>shot(3,'E3','Guido llega con su flauta…'));
+    at(9500,()=>shot(4,'E4','…y Sol, con su xilófono.'));
+    at(12500,()=>{shot(5,'E5','¡Que empiece la música!');let b=0;beatI=setInterval(()=>{I.classList.toggle('b',b++%2===0);note(18+Math.random()*12);note(62+Math.random()*14)},250)});
+    at(16500,()=>{clearInterval(beatI);shot(6,'E6','')});
+    at(19500,end);
+  }
+  $('igo').onclick=gate.onclick=e=>{e.stopPropagation();start()};
+  $('iskip').onclick=e=>{e.stopPropagation();try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();ac.resume()}catch(x){}end()};
+  addEventListener('keydown',e=>{if(done)return;
+    if(e.code==='Escape'){e.preventDefault();e.stopImmediatePropagation();end();return}
+    if(e.code==='Enter'||e.code==='Space'){e.preventDefault();e.stopImmediatePropagation();started?end():start()}},true);
   if(matchMedia('(prefers-reduced-motion: reduce)').matches)end();
 })();
 
