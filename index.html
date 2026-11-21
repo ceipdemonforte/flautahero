@@ -76,6 +76,10 @@ main.narrow #fing .f:first-child{left:0}
 main.narrow #fing .f+.f{left:calc(50% + 3px);right:auto}
 main.narrow #fing .lab{font-size:1rem}
 body.duo main{grid-column:1/3}
+body.duo #fing{display:none}
+body.fsolo #fing{display:none}
+body.xsolo #fing{display:none}
+@media (orientation:landscape) and (min-width:700px){body.xsolo main,body.fsolo main{grid-column:1/3}}
 </style>
 </head>
 <body>
@@ -112,46 +116,55 @@ body.duo main{grid-column:1/3}
 const NAMES=['Do','Re','Mi','Fa','Sol','La','Si','Do’'];
 const COLORS=['#ff5d5d','#ff9b3d','#ffd23f','#7be04a','#2fd4b0','#4da3ff','#9a7bff','#ff6fd0'];
 const SONGS={
- 'Himno de la alegría':'2/1 2/1 3/1 4/1 4/1 3/1 2/1 1/1 0/1 0/1 1/1 2/1 2/1.5 1/.5 1/2 2/1 2/1 3/1 4/1 4/1 3/1 2/1 1/1 0/1 0/1 1/1 2/1 1/1.5 0/.5 0/2',
- 'Mary tenía un corderito':'2/1 1/1 0/1 1/1 2/1 2/1 2/2 1/1 1/1 1/2 2/1 4/1 4/2 2/1 1/1 0/1 1/1 2/1 2/1 2/1 2/1 1/1 1/1 2/1 1/1 0/4',
- 'Fray Santiago':'0/1 1/1 2/1 0/1 0/1 1/1 2/1 0/1 2/1 3/1 4/2 2/1 3/1 4/2 4/.5 5/.5 4/.5 3/.5 2/1 0/1 4/.5 5/.5 4/.5 3/.5 2/1 0/1 0/1 4/1 0/2 0/1 4/1 0/2',
- 'Jingle Bells':'2/1 2/1 2/2 2/1 2/1 2/2 2/1 4/1 0/1.5 1/.5 2/4 3/1 3/1 3/1.5 3/.5 3/1 2/1 2/1 2/.5 2/.5 2/1 1/1 1/1 2/1 1/2 4/2',
- 'Estrellita, ¿dónde estás?':'0/1 0/1 4/1 4/1 5/1 5/1 4/2 3/1 3/1 2/1 2/1 1/1 1/1 0/2 4/1 4/1 3/1 3/1 2/1 2/1 1/2 4/1 4/1 3/1 3/1 2/1 2/1 1/2 0/1 0/1 4/1 4/1 5/1 5/1 4/2 3/1 3/1 2/1 2/1 1/1 1/1 0/2',
- 'Al claro de luna':'0/1 0/1 0/1 1/1 2/2 1/2 0/1 2/1 1/1 1/1 0/4',
- 'Panecillos calientes':'2/1 1/1 0/2 2/1 1/1 0/2 0/.5 0/.5 0/.5 0/.5 1/.5 1/.5 1/.5 1/.5 2/1 1/1 0/2',
- 'La cucaracha':'0/.5 0/.5 0/.5 3/1 5/2 0/.5 0/.5 0/.5 3/1 5/2 3/1 3/1 2/1 2/1 1/1 1/1 0/2 0/.5 0/.5 0/.5 3/1 5/2 0/.5 0/.5 0/.5 3/1 5/2 3/1 3/1 2/1 2/1 1/1 1/1 0/2',
- 'Oh, Susana':'0/.5 1/.5 2/1 4/1 4/1.5 5/.5 4/1 2/1 0/1.5 1/.5 2/1 2/1 1/1 0/1 1/2 0/.5 1/.5 2/1 4/1 4/1.5 5/.5 4/1 2/1 0/1.5 1/.5 2/1 2/1 1/1 1/1 0/2',
- 'Ritmo urbano (original)':'2/1.5 4/1.5 5/1 4/1.5 2/1.5 1/1 2/1.5 4/1.5 7/1 5/2 4/2 7/1.5 6/1.5 5/1 4/1.5 5/1.5 6/1 5/1.5 4/1.5 2/1 0/3 r/1 2/1.5 4/1.5 5/1 4/1.5 2/1.5 1/1 2/1.5 4/1.5 7/1 5/2 4/2 7/1.5 6/1.5 5/1 4/1.5 5/1.5 6/1 5/1.5 4/1.5 2/1 0/4',
- 'Old MacDonald had a farm':'3/1 3/1 3/1 0/1 1/1 1/1 0/2 5/1 5/1 4/1 4/1 3/3 0/1 3/1 3/1 3/1 0/1 1/1 1/1 0/2 5/1 5/1 4/1 4/1 3/3 0/.5 0/.5 3/1 3/1 3/1 0/.5 0/.5 3/1 3/1 3/1 r/1 3/.5 3/.5 3/1 3/.5 3/.5 3/1 3/.5 3/.5 3/.5 3/.5 3/1 3/1 3/1 3/1 3/1 0/1 1/1 1/1 0/2 5/1 5/1 4/1 4/1 3/3 r/1 3/1 3/1 3/1 0/1 1/1 1/1 0/2 5/1 5/1 4/1 4/1 3/3 0/1 3/1 3/1 3/1 0/1 1/1 1/1 0/2 5/1 5/1 4/1 4/1 3/3 0/.5 0/.5 3/1 3/1 3/1 0/.5 0/.5 3/1 3/1 3/1 r/1 3/.5 3/.5 3/1 3/.5 3/.5 3/1 3/.5 3/.5 3/.5 3/.5 3/1 3/1 3/1 3/1 3/1 0/1 1/1 1/1 0/2 5/1 5/1 4/1 4/1 3/3 r/1 3/1 0/.5 0/.5 1/1 0/1 r/1 2/1 3/3',
  'Feliz Navidad':'r/1 5/.5 5/.5 5/.5 4/.5 3/.5 4/1 3/.5 5/.5 4/.25 3/.25 4/.5 3/.5 5/1 r/.5 5/.5 5/.5 5/.5 5/.5 4/.5 3/.5 4/1 3/.5 5/.5 4/1 3/.5 2/.5 1/1.5 r/2 1/.25 2/.25 1/1 r/.5 1/.25 2/.25 1/1 r/.5 1/.25 2/.25 1/1 r/4 1/.5 3/.5 4/1 3/.5 2/.5 1/1.5 r/2 1/.25 2/.25 1/1 r/.5 1/.25 2/.25 1/1 r/.5 1/.25 2/.25 1/1 r/8 5/.5 5/.5 5/.5 5/.5 4/.5 3/.5 4/1 3/.5 5/.5 4/.25 3/.25 4/.5 3/.5 5/1 r/.5 5/.5 5/.5 5/.5 5/.5 4/.5 3/.5 4/.5 3/.5 5/.5 4/.5 4/1 3/.5 2/.5 1/1.5 r/2 1/.25 2/.25 1/1 r/.5 1/.25 2/.25 1/1 r/.5 1/.25 2/.25 1/1',
- 'Zelda Ocarine':'3/.5 5/.5 6/1 3/.5 5/.5 6/1 3/.5 5/.5 6/.5 2/.5 1/1 6/.5 7/.5 6/.5 4/.5 2/2.5 1/.5 2/.5 4/.5 2/3 3/.5 5/.5 6/1 3/.5 5/.5 6/1 3/.5 5/.5 6/.5 2/.5 1/1 6/.5 7/.5 2/.5 6/.5 4/2.5 6/.5 4/.5 1/.5 2/3 1/.5 2/.5 3/1 4/.5 5/.5 6/1 7/.5 6/.5 2/3 1/.5 2/.5 3/1 4/.5 5/.5 6/1 7/.5 1/.5 2/3 1/.5 2/.5 3/1 4/.5 5/.5 6/1 7/.5 6/.5 2/3 1/.5 0/.5 3/.5 2/.5 4/.5 3/.5 5/.5 4/.5 6/.5 5/.5 7/.5 6/.5 1/.5 7/.5 2/.25 3/.25 1/.5 3/.5 5/.5 6/1 3/.5 5/.5 6/1 3/.5 5/.5 6/.5 2/.5 1/1 6/.5 7/.5 6/.5 4/.5 2/2.5 1/.5 2/.5 4/.5 2/3 3/.5 5/.5 6/1 3/.5 5/.5 6/1 3/.5 5/.5 6/.5 2/.5 1/1 6/.5 7/.5 2/.5 6/.5 4/2.5 6/.5 4/.5 1/.5 2/3 1/.5 2/.5 3/1 4/.5 5/.5 6/1 7/.5 6/.5 2/3 1/.5 2/.5 3/1 4/.5 5/.5 6/1 7/.5 1/.5 2/3 1/.5 2/.5 3/1 4/.5 5/.5 6/1 7/.5 6/.5 2/3 1/.5 0/.5 3/.5 2/.5 4/.5 3/.5 5/.5 4/.5 6/.5 5/.5 7/.5 6/.5 1/.5 7/.5 2/.25 3/.25 1/2',
- 'Pop brillante (original)':'4/.5 4/.5 5/.5 4/.5 2/1 2/1 3/.5 3/.5 4/.5 3/.5 1/1 1/1 2/.5 2/.5 4/.5 5/.5 7/1 6/1 5/2 r/1 4/1 7/1 7/.5 6/.5 5/1 4/1 5/.5 5/.5 4/.5 2/.5 4/2 7/1 7/.5 6/.5 5/1 6/1 7/3 r/1 4/.5 4/.5 5/.5 4/.5 2/1 2/1 3/.5 3/.5 4/.5 3/.5 1/1 1/1 2/.5 2/.5 4/.5 5/.5 7/1 6/1 5/2 r/1 4/1 7/1 7/.5 6/.5 5/1 4/1 5/.5 5/.5 4/.5 2/.5 4/2 7/1 7/.5 6/.5 5/1 6/1 7/3 r/1 4/1 2/1 0/2'
+ 'Zelda Ocarine':'3/.5 5/.5 6/1 3/.5 5/.5 6/1 3/.5 5/.5 6/.5 2/.5 1/1 6/.5 7/.5 6/.5 4/.5 2/2.5 1/.5 2/.5 4/.5 2/3 3/.5 5/.5 6/1 3/.5 5/.5 6/1 3/.5 5/.5 6/.5 2/.5 1/1 6/.5 7/.5 2/.5 6/.5 4/2.5 6/.5 4/.5 1/.5 2/3 1/.5 2/.5 3/1 4/.5 5/.5 6/1 7/.5 6/.5 2/3 1/.5 2/.5 3/1 4/.5 5/.5 6/1 7/.5 1/.5 2/3 1/.5 2/.5 3/1 4/.5 5/.5 6/1 7/.5 6/.5 2/3 1/.5 0/.5 3/.5 2/.5 4/.5 3/.5 5/.5 4/.5 6/.5 5/.5 7/.5 6/.5 1/.5 7/.5 2/.25 3/.25 1/.5 3/.5 5/.5 6/1 3/.5 5/.5 6/1 3/.5 5/.5 6/.5 2/.5 1/1 6/.5 7/.5 6/.5 4/.5 2/2.5 1/.5 2/.5 4/.5 2/3 3/.5 5/.5 6/1 3/.5 5/.5 6/1 3/.5 5/.5 6/.5 2/.5 1/1 6/.5 7/.5 2/.5 6/.5 4/2.5 6/.5 4/.5 1/.5 2/3 1/.5 2/.5 3/1 4/.5 5/.5 6/1 7/.5 6/.5 2/3 1/.5 2/.5 3/1 4/.5 5/.5 6/1 7/.5 1/.5 2/3 1/.5 2/.5 3/1 4/.5 5/.5 6/1 7/.5 6/.5 2/3 1/.5 0/.5 3/.5 2/.5 4/.5 3/.5 5/.5 4/.5 6/.5 5/.5 7/.5 6/.5 1/.5 7/.5 2/.25 3/.25 1/2'
 };
 const $=id=>document.getElementById(id);
 const cv=$('c'),ctx=cv.getContext('2d'),msg=$('msg');
 let notes=[],total=0,t=-4,playing=false,last=0,beatPrev=-99,ac=null,ni=0,voice=null,fi=-2,duo=false;
 const FREQ=[523.25,587.33,659.25,698.46,783.99,880,987.77,1046.5];
 const VIS=4;
-const DUOS={'Dúo: flauta y xilófono (original)':{
- f:'2/1 4/1 4/1 2/1 5/1 5/1 2/1 0/1 3/1 5/1 5/1 3/1 4/2 6/2 7/2 4/2 5/1 7/1 5/1 2/1 3/1 5/1 7/1 5/1 6/2 4/2 2/2 0/2 3/1 5/1 7/2 r/4 2/1 4/1 6/2 r/4 3/2 5/2 6/2 4/2 7/4 0/4',
- x:'0/1 2/1 0/1 0/1 2/1 0/1 0/1 5/1 5/1 3/1 0/1 5/1 6/1 6/1 1/1 1/1 2/1 2/1 0/1 0/1 0/1 2/1 0/1 5/1 5/1 3/1 5/1 3/1 1/1 1/1 6/1 6/1 4/2 2/2 r/4 6/1 4/1 1/2 r/4 5/1 7/1 5/2 0/1 0/1 7/2 1/1 1/1 6/2 0/1 2/1 4/1 2/1 4/1 2/1 0/2'},
+const DUOS={'Himno de la alegría':{
+ f:'2/1 2/1 3/1 4/1 4/1 3/1 2/1 1/1 0/1 0/1 1/1 2/1 2/1.5 1/.5 1/2 2/1 2/1 3/1 4/1 4/1 3/1 2/1 1/1 0/1 0/1 1/1 2/1 1/1.5 0/.5 0/2',
+ x:'0/1 0/1 7/1 0/1 0/1 7/1 4/1 2/1 4/1 2/1 6/1 6/1 0/1 0/1 6/1 6/1 0/1 0/1 7/1 0/1 0/1 7/1 4/1 2/1 4/1 2/1 6/1 6/1 4/1 6/1 4/1 0/1'},
+ 'Mary tenía un corderito':{
+ f:'2/1 1/1 0/1 1/1 2/1 2/1 2/2 1/1 1/1 1/2 2/1 4/1 4/2 2/1 1/1 0/1 1/1 2/1 2/1 2/1 2/1 1/1 1/1 2/1 1/1 0/4',
+ x:'0/1 2/1 4/1 2/1 0/1 0/1 4/1 0/1 4/1 6/1 6/1 6/1 0/1 2/1 0/1 2/1 0/1 2/1 4/1 2/1 0/1 0/1 4/1 0/1 4/1 6/1 4/1 2/1 4/1 2/1 4/1 0/1'},
+ 'Fray Santiago':{
+ f:'0/1 1/1 2/1 0/1 0/1 1/1 2/1 0/1 2/1 3/1 4/2 2/1 3/1 4/2 4/.5 5/.5 4/.5 3/.5 2/1 0/1 4/.5 5/.5 4/.5 3/.5 2/1 0/1 0/1 4/1 0/2 0/1 4/1 0/2',
+ x:'4/1 2/1 4/1 2/1 4/1 2/1 4/1 2/1 0/1 7/1 0/1 2/1 0/1 7/1 0/1 2/1 0/1 2/1 4/1 2/1 0/1 2/1 4/1 2/1 4/1 2/1 4/1 2/1 4/1 2/1 4/1 0/1'},
+ 'Jingle Bells':{
+ f:'2/1 2/1 2/2 2/1 2/1 2/2 2/1 4/1 0/1.5 1/.5 2/4 3/1 3/1 3/1.5 3/.5 3/1 2/1 2/1 2/.5 2/.5 2/1 1/1 1/1 2/1 1/2 4/2',
+ x:'0/1 0/1 4/1 0/1 0/1 0/1 4/1 0/1 0/1 2/1 4/1 2/1 0/1 0/1 4/1 0/1 7/1 5/1 7/1 5/1 7/1 5/1 4/1 0/1 0/1 2/1 6/1 6/1 4/1 6/1 0/1 0/1'},
+ 'Estrellita, ¿dónde estás?':{
+ f:'0/1 0/1 4/1 4/1 5/1 5/1 4/2 3/1 3/1 2/1 2/1 1/1 1/1 0/2 4/1 4/1 3/1 3/1 2/1 2/1 1/2 4/1 4/1 3/1 3/1 2/1 2/1 1/2 0/1 0/1 4/1 4/1 5/1 5/1 4/2 3/1 3/1 2/1 2/1 1/1 1/1 0/2',
+ x:'4/1 2/1 0/1 2/1 3/1 3/1 0/1 2/1 7/1 5/1 4/1 0/1 4/1 6/1 4/1 2/1 0/1 2/1 7/1 5/1 0/1 0/1 6/1 6/1 6/1 6/1 7/1 5/1 0/1 0/1 6/1 6/1 4/1 2/1 0/1 2/1 3/1 3/1 0/1 2/1 7/1 5/1 4/1 0/1 4/1 6/1 4/1 0/1'},
+ 'Old MacDonald had a farm':{
+ f:'3/1 3/1 3/1 0/1 1/1 1/1 0/2 5/1 5/1 4/1 4/1 3/3 0/1 3/1 3/1 3/1 0/1 1/1 1/1 0/2 5/1 5/1 4/1 4/1 3/3 0/.5 0/.5 3/1 3/1 3/1 0/.5 0/.5 3/1 3/1 3/1 r/1 3/.5 3/.5 3/1 3/.5 3/.5 3/1 3/.5 3/.5 3/.5 3/.5 3/1 3/1 3/1 3/1 3/1 0/1 1/1 1/1 0/2 5/1 5/1 4/1 4/1 3/3 r/1 3/1 3/1 3/1 0/1 1/1 1/1 0/2 5/1 5/1 4/1 4/1 3/3 0/1 3/1 3/1 3/1 0/1 1/1 1/1 0/2 5/1 5/1 4/1 4/1 3/3 0/.5 0/.5 3/1 3/1 3/1 0/.5 0/.5 3/1 3/1 3/1 r/1 3/.5 3/.5 3/1 3/.5 3/.5 3/1 3/.5 3/.5 3/.5 3/.5 3/1 3/1 3/1 3/1 3/1 0/1 1/1 1/1 0/2 5/1 5/1 4/1 4/1 3/3 r/1 3/1 0/.5 0/.5 1/1 0/1 r/1 2/1 3/3',
+ x:'7/1 5/1 7/1 5/1 4/1 6/1 4/1 2/1 3/1 3/1 0/1 2/1 7/1 5/1 7/1 5/1 7/1 5/1 7/1 5/1 4/1 6/1 4/1 2/1 3/1 3/1 0/1 2/1 7/1 5/1 7/1 5/1 7/1 5/1 7/1 5/1 7/1 5/1 7/1 5/1 7/1 5/1 7/1 5/1 7/1 5/1 7/1 5/1 7/1 5/1 7/1 5/1 4/1 6/1 4/1 2/1 3/1 3/1 0/1 2/1 7/1 5/1 7/1 5/1 7/1 5/1 7/1 5/1 4/1 6/1 4/1 2/1 3/1 3/1 0/1 2/1 7/1 5/1 7/1 5/1 7/1 5/1 7/1 5/1 4/1 6/1 4/1 2/1 3/1 3/1 0/1 2/1 7/1 5/1 7/1 5/1 7/1 5/1 7/1 5/1 7/1 5/1 7/1 5/1 7/1 5/1 7/1 5/1 7/1 5/1 7/1 5/1 7/1 5/1 7/1 5/1 4/1 6/1 4/1 2/1 3/1 3/1 0/1 2/1 7/1 5/1 7/1 5/1 7/1 5/1 6/1 4/1 0/1 0/1 7/1 5/1 0/1'},
+ 'Pop brillante (original)':{
+ f:'4/.5 4/.5 5/.5 4/.5 2/1 2/1 3/.5 3/.5 4/.5 3/.5 1/1 1/1 2/.5 2/.5 4/.5 5/.5 7/1 6/1 5/2 r/1 4/1 7/1 7/.5 6/.5 5/1 4/1 5/.5 5/.5 4/.5 2/.5 4/2 7/1 7/.5 6/.5 5/1 6/1 7/3 r/1 4/.5 4/.5 5/.5 4/.5 2/1 2/1 3/.5 3/.5 4/.5 3/.5 1/1 1/1 2/.5 2/.5 4/.5 5/.5 7/1 6/1 5/2 r/1 4/1 7/1 7/.5 6/.5 5/1 4/1 5/.5 5/.5 4/.5 2/.5 4/2 7/1 7/.5 6/.5 5/1 6/1 7/3 r/1 4/1 2/1 0/2',
+ x:'0/1 2/1 4/1 0/1 7/1 5/1 6/1 6/1 0/1 2/1 4/1 2/1 3/1 3/1 4/1 2/1 2/1 2/1 7/1 0/1 0/1 0/1 0/1 2/1 2/1 2/1 7/1 5/1 3/1 5/1 3/1 5/1 0/1 2/1 4/1 0/1 7/1 5/1 6/1 6/1 0/1 2/1 4/1 2/1 3/1 3/1 4/1 2/1 2/1 2/1 7/1 0/1 0/1 0/1 0/1 2/1 2/1 2/1 7/1 5/1 3/1 5/1 3/1 5/1 0/1 0/1 4/1 0/1'},
  'Dúo rock (original)':{
  f:'r/16 2/.5 2/.5 4/.5 2/.5 5/1 4/1 1/.5 1/.5 4/.5 1/.5 6/1 4/1 0/.5 0/.5 3/.5 0/.5 5/1 3/1 1/.5 4/.5 6/.5 4/.5 1/2 2/.5 2/.5 4/.5 2/.5 5/1 4/1 1/.5 1/.5 4/.5 1/.5 6/1 4/1 0/.5 0/.5 3/.5 0/.5 5/1 3/1 6/1 4/1 1/2 7/2 5/1 2/1 5/2 3/1 5/1 4/1.5 4/.5 2/1 4/1 6/2 4/1 1/1 7/1.5 7/.5 5/1 2/1 5/1 7/1 5/1 3/1 6/1 4/1 6/1 1/1 5/4',
  x:'5/.5 5/.5 2/.5 5/.5 5/.5 5/.5 2/.5 5/.5 4/.5 4/.5 1/.5 4/.5 4/.5 4/.5 1/.5 4/.5 3/.5 3/.5 0/.5 3/.5 3/.5 3/.5 0/.5 3/.5 4/.5 4/.5 1/.5 4/.5 4/.5 4/.5 1/.5 4/.5 5/.5 5/.5 2/.5 5/.5 5/.5 5/.5 2/.5 5/.5 4/.5 4/.5 1/.5 4/.5 4/.5 4/.5 1/.5 4/.5 3/.5 3/.5 0/.5 3/.5 3/.5 3/.5 0/.5 3/.5 4/.5 4/.5 1/.5 4/.5 4/.5 4/.5 1/.5 4/.5 5/.5 5/.5 2/.5 5/.5 5/.5 5/.5 2/.5 5/.5 3/.5 3/.5 0/.5 3/.5 3/.5 3/.5 0/.5 3/.5 0/.5 0/.5 4/.5 0/.5 0/.5 0/.5 4/.5 0/.5 4/.5 4/.5 1/.5 4/.5 4/.5 4/.5 1/.5 4/.5 5/.5 5/.5 2/.5 5/.5 5/.5 5/.5 2/.5 5/.5 3/.5 3/.5 0/.5 3/.5 3/.5 3/.5 0/.5 3/.5 4/.5 4/.5 1/.5 4/.5 4/.5 4/.5 1/.5 4/.5 5/.5 5/.5 2/.5 5/.5 5/2'},
  'Vals de Amelie':{
  f:'r/.5 1/.5 2/.5 3/.5 2/.5 3/.5 4/2.5 3/.5 2/1.5 1/1.5 4/1.75 5/.25 4/.25 3/.25 2/.25 3/.25 2/1.5 1/1.5 3/2.5 2/.5 5/3 3/1.75 4/.25 3/.25 2/.25 3/.25 2/.25 5/2 4/.5 5/.5 4/2.5 3/.5 2/1.5 1/1.5 4/1.75 5/.25 4/.25 3/.25 2/.25 3/.25 2/1.5 1/1.5 3/2.5 2/.5 5/3 3/1.75 4/.25 3/.25 2/.25 3/.25 2/.25 5/3',
  x:'r/3 4/1.5 4/1.5 1/1.5 1/1.5 4/1.5 4/1.5 1/1.5 1/1.5 1/1.5 1/1.5 3/1.5 3/1.5 1/1.5 1/1.5 3/1.5 3/1.5 4/1.5 4/1.5 1/1.5 1/1.5 4/1.5 4/1.5 1/1.5 1/1.5 1/1.5 1/1.5 3/1.5 3/1.5 1/1.5 1/1.5 3/3'},
- 'Partitura de piano (dúo)':{
- f:'r/1 1/1 0/.5 5/.5 r/.5 2/1 2/.5 1/.5 1/.5 0/.5 2/1 2/.5 2/.5 1/1 5/5 5/.5 6/.5 0/2.5 1/2 2/1.5 3/1.5 r/.5 4/1 4/.5 3/1 2/.5 1/.5 0/.5 2/2.5 r/2 r/1 1/1 0/.5 5/.5 r/.5 2/1 2/.5 1/.5 1/.5 0/.5 2/1 2/.5 2/.5 1/1 5/5 5/.5 6/.5 0/2.5 1/2 2/1 3/1 4/1 3/.5 3/1 2/.5 2/3 r/4 5/3 2/.5 5/.5 4/1 3/1 2/1 1/1 3/3 2/.5 2/4.5 r/1 0/1 3/1 2/1 3/1 2/.5 0/1 0/1.5 r/1 0/.5 0/.5 3/1 2/1 3/1 2/1 3/1 4/.5 4/4.5 r/4 r/1 1/1 0/.5 5/.5 r/.5 2/1 2/.5 1/.5 1/.5 0/.5 2/1 2/.5 2/.5 1/1 5/5 5/.5 6/.5 0/2.5 1/2 2/1.5 3/1.5 r/.5 4/1 4/.5 3/1 2/.5 1/.5 0/.5 2/2.5 r/2 r/1 1/1 0/.5 5/.5 r/.5 2/1 2/.5 1/.5 1/.5 0/.5 2/1 2/.5 2/.5 1/1 5/5 5/.5 6/.5 0/2.5 1/2 2/1 3/1 4/1 3/.5 3/1 2/.5 2/3 5/4',
- x:'5/2 5/2 5/2 5/2 1/2 1/2 5/2 5/2 0/2 0/2 4/2 4/2 0/2 0/2 2/2 2/2 5/2 5/2 5/2 5/2 1/2 1/2 5/2 5/2 0/2 0/2 1/2 1/2 2/2 2/2 r/4 5/2 5/2 4/2 4/2 1/2 1/2 2/2 2/2 3/2 3/2 0/2 0/2 3/2 3/2 4/2 4/2 0/2 0/2 r/4 5/2 5/2 5/2 5/2 1/2 1/2 5/2 5/2 0/2 0/2 4/2 4/2 0/2 0/2 2/2 2/2 5/2 5/2 5/2 5/2 1/2 1/2 5/2 5/2 0/2 0/2 1/2 1/2 2/2 2/2 5/4'},
  'Old Mc Donald Duo':{
  f:'4/1 4/1 4/1 1/1 2/1 2/1 1/2 6/1 6/1 5/1 5/1 4/2 r/1 1/1 4/1 4/1 4/1 1/1 2/1 2/1 1/2 6/1 6/1 5/1 5/1 4/2 r/1 1/.5 1/.5 4/1 4/1 4/2 4/1 4/1 4/2 4/.5 4/.5 4/1 4/.5 4/.5 4/1 4/.5 4/.5 4/.5 4/.5 4/1 4/1 4/1 4/1 4/1 1/1 2/1 2/1 1/2 6/1 6/1 5/1 5/1 4/4',
  x:'6/1 1/1 6/1 6/1 0/1 4/1 6/1 4/1 4/1 1/1 1/1 1/1 6/1 1/1 6/1 6/1 6/1 1/1 6/1 6/1 0/1 4/1 6/1 4/1 4/1 1/1 1/1 1/1 6/1 1/1 6/1 6/1 6/1 1/1 6/1 1/1 6/1 1/1 6/1 1/1 1/1 6/1 1/1 6/1 6/1 1/1 6/1 1/1 6/1 1/1 6/1 6/1 0/1 4/1 6/1 4/1 4/1 1/1 1/1 1/1 6/1 1/1 4/2'},
+ 'Barcarola Duo':{
+ f:'6/2 7/1 7/2 6/1 6/1 5/1 7/1 7/2 6/1 6/1 5/1 7/1 7/2 6/1 6/3 r/3 6/2 7/1 7/2 6/1 6/1 5/1 7/1 7/2 6/1 6/1 5/1 7/1 7/2 6/1 6/3 r/3',
+ x:'4/1 1/1 4/1 4/1 1/1 4/1 1/1 0/1 5/1 5/1 0/1 1/1 1/1 0/1 5/1 5/1 0/1 1/1 4/1 1/1 4/1 4/1 1/1 6/1 4/1 1/1 4/1 4/1 1/1 4/1 1/1 0/1 5/1 5/1 0/1 1/1 1/1 0/1 5/1 5/1 0/1 1/1 4/1 1/1 4/1 6/1 1/1 4/1'},
+ 'Din Don Duo':{
+ f:'6/2 5/2 6/1 5/1 4/2 6/1 6/1 5/1 5/1 6/1 5/1 4/2 6/2 5/2 6/1 5/1 4/2 6/1 6/1 5/1 5/1 6/1 5/1 4/2 6/2 4/2',
+ x:'4/1 1/1 1/1 1/1 1/1 1/1 6/1 1/1 4/1 4/1 1/1 1/1 1/1 1/1 6/1 1/1 4/1 1/1 1/1 1/1 1/1 1/1 6/1 1/1 4/1 4/1 1/1 1/1 1/1 1/1 6/1 1/1 4/1 1/1 6/1 4/1'},
  'La granja de Pepito (dúo)':{
  f:'0/1 0/1 0/1 4/1 5/1 5/1 4/2 2/1 2/1 1/1 1/1 0/4 4/.5 4/.5 7/1 7/1 7/1 4/.5 4/.5 7/1 7/1 7/1 7/.5 7/.5 7/1 7/.5 7/.5 7/1 7/.5 7/.5 7/.5 7/.5 7/1 7/1 0/1 0/1 0/1 4/1 5/1 5/1 4/2 2/1 2/1 1/1 1/1 0/4',
  x:'2/1 4/1 2/1 2/1 3/1 3/1 2/1 2/1 0/1 0/1 6/1 6/1 4/1 2/1 4/1 2/1 2/1 4/1 4/1 4/1 2/1 4/1 2/1 4/1 3/1 5/1 3/1 5/1 4/1 2/1 4/1 4/1 2/1 4/1 2/1 2/1 3/1 3/1 2/1 2/1 0/1 0/1 6/1 6/1 4/1 2/1 0/2'}};
-for(const k in SONGS){const o=document.createElement('option');o.textContent=k;$('song').appendChild(o)}
 for(const k in DUOS){const o=document.createElement('option');o.textContent=k;$('song').appendChild(o)}
+for(const k in SONGS){const o=document.createElement('option');o.textContent=k;$('song').appendChild(o)}
 let instKeep=null;
 function load(){
   notes=[];let s=0;
@@ -278,6 +291,8 @@ function upd(){
   });
 }
 function layout(){
+  document.body.classList.toggle('xsolo',!duo&&$('inst').value==='x');
+  document.body.classList.toggle('fsolo',!duo&&$('inst').value==='f');
   const m=document.querySelector('main'),f=$('fing'),inM=f.parentNode===m;
   if(duo&&!inM)m.appendChild(f);
   if(!duo&&inM)document.body.insertBefore(f,m);
@@ -290,6 +305,7 @@ function size(){
 }
 function rr(x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,Math.min(r,h/2,w/2));ctx.fill()}
 let LAY={r0:0,lw:0,narrow:false};
+let LAYH={on:false};
 function duoGW(W){const h=W/2;return h>=420?Math.round(Math.min(h*.36,380)):0}
 function highway(x0,lw,H,hy,ppb,v,active){
   for(let i=0;i<8;i++){
@@ -315,13 +331,91 @@ function highway(x0,lw,H,hy,ppb,v,active){
     ctx.globalAlpha=1;
   }
   ctx.fillStyle='#fff';ctx.fillRect(x0,hy,lw*8,4);
-  for(let i=0;i<8;i++){
+  if(v==='x'||(!v&&$('inst').value==='x'))drawXyloKeys(x0,lw,H,hy,pad,v,active);
+  else for(let i=0;i<8;i++){
     const x=x0+i*lw,pt=pressed[(v==='x'?'x':'s')+i],pr=pt&&performance.now()-pt<200,on=i===active||pr;
     ctx.fillStyle=COLORS[i];ctx.globalAlpha=on?1:.55;
     rr(x+pad,hy+12,lw-2*pad,H-hy-20,Math.min(16,lw*.22));ctx.globalAlpha=1;
     if(pr){ctx.strokeStyle='#fff';ctx.lineWidth=4;ctx.beginPath();ctx.roundRect(x+pad,hy+12,lw-2*pad,H-hy-20,Math.min(16,lw*.22));ctx.stroke()}
     ctx.fillStyle='#1a1330';ctx.font='800 '+Math.min(lw*.4,Math.max(16,H*.055))+'px "Baloo 2",sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.fillText(NAMES[i],x+lw/2,hy+(H-hy)/2+4);ctx.textBaseline='alphabetic';
+  }
+}
+// Flauta vertical (boquilla arriba): las notas viajan de izquierda a derecha y llegan al agujero de su carril
+function hflute(Wz,H,v,active){
+  const hh=Math.min(H*.11,84),fh=Math.min(H*.05,36),ry0=hh,rh=(H-hh-fh)/8;
+  const bw=Math.max(44,Math.min(rh*1.05,110)),lab=Math.max(44,Math.min(rh*1.1,90));
+  const hx=Wz-lab-bw/2-8,ppbx=hx/VIS,pad=Math.max(2,Math.min(6,rh*.08));
+  LAYH={on:true,hx,bw,ry0,rh,cy:[0,1,2,3,4,5,6,7].map(i=>ry0+(7-i)*rh+rh/2)};
+  let tg=active;
+  if(tg<0){for(const n of notes)if((!v||n.v===v)&&n.s+n.d>t){tg=n.n;break}}
+  const f=tg>=0?FING[tg]:null,kb=KH.some(Boolean);
+  // fondo: una fila por carril
+  ctx.fillStyle='rgba(20,16,42,.6)';ctx.fillRect(0,0,Wz,H);
+  for(let i=0;i<8;i++){
+    const y=ry0+(7-i)*rh;
+    ctx.fillStyle=i%2?'rgba(27,22,54,.62)':'rgba(23,18,48,.72)';ctx.fillRect(0,y,Wz,rh);
+    if(i===active){ctx.fillStyle=COLORS[i]+'40';ctx.fillRect(0,y,Wz,rh)}
+    ctx.fillStyle='rgba(255,255,255,.1)';ctx.fillRect(0,y,Wz,1);
+  }
+  // cuerpo de la flauta (cabeza arriba, campana abajo)
+  ctx.fillStyle='#f4e7c9';rr(hx-bw*.42,ry0-rh*.25,bw*.84,H-fh*.6-ry0+rh*.25,bw*.3);
+  ctx.fillStyle='#e9d8b0';rr(hx-bw*.36,3,bw*.72,hh-3+rh*.25,bw*.28);
+  ctx.fillStyle='#3a2a1a';rr(hx-bw*.16,hh*.4,bw*.32,hh*.16,3);
+  ctx.fillStyle='#e9d8b0';rr(hx-bw*.5,H-fh-2,bw,fh,bw*.22);
+  ctx.strokeStyle='rgba(120,90,40,.5)';ctx.lineWidth=1.5;ctx.beginPath();ctx.roundRect(hx-bw*.42,ry0-rh*.25,bw*.84,H-fh*.6-ry0+rh*.25,bw*.3);ctx.stroke();
+  // notas: de izquierda a derecha hasta su agujero
+  ctx.save();ctx.beginPath();ctx.rect(0,0,hx+bw*.42,H);ctx.clip();
+  for(const n of notes){
+    if(v&&n.v!==v)continue;
+    const xr=hx-(n.s-t)*ppbx,xl=xr-n.d*ppbx;
+    if(xr<0||xl>hx+bw)continue;
+    const past=t>n.s+n.d,y=ry0+(7-n.n)*rh+pad,h=rh-2*pad;
+    ctx.globalAlpha=past?.25:1;ctx.fillStyle=n.j==='miss'?'#6b6585':COLORS[n.n];
+    rr(xl+3,y,Math.max(xr-xl-6,10),h,Math.min(14,h*.3));
+    if(n.j&&n.j!=='miss'){ctx.strokeStyle='#fff';ctx.lineWidth=4;ctx.beginPath();ctx.roundRect(xl+5,y+2,Math.max(xr-xl-10,6),h-4,10);ctx.stroke()}
+    ctx.fillStyle='#1a1330';ctx.font='800 '+Math.min(h*.6,Math.max(16,H*.045))+'px "Baloo 2",sans-serif';ctx.textAlign='right';ctx.textBaseline='middle';
+    ctx.fillText(NAMES[n.n],xr-9,y+h/2+1);ctx.textBaseline='alphabetic';
+    ctx.globalAlpha=1;
+  }
+  ctx.restore();
+  // agujeros: carril i = agujero 7-i ; carril 7 = pulgar (Th)
+  const r=Math.min(rh*.34,bw*.3);
+  for(let i=0;i<8;i++){
+    const k=7-i,cy=LAYH.cy[i],cov=f&&f[k];
+    if(i===active){ctx.fillStyle=COLORS[i];ctx.globalAlpha=.45;ctx.beginPath();ctx.arc(hx,cy,r*1.55,0,7);ctx.fill();ctx.globalAlpha=1}
+    ctx.lineWidth=Math.max(2,r*.14);ctx.strokeStyle='#1a1330';
+    if(cov){ctx.fillStyle=COLORS[tg];ctx.beginPath();ctx.arc(hx,cy,r,0,7);ctx.fill();ctx.stroke()}
+    else if(k===0){ctx.fillStyle='#1a1330';ctx.beginPath();ctx.arc(hx,cy,r,0,7);ctx.fill()}
+    else{ctx.fillStyle='#fffaf0';ctx.beginPath();ctx.arc(hx,cy,r,0,7);ctx.fill();ctx.strokeStyle='#7a5a2a';ctx.stroke();ctx.fillStyle='#3a2a1a';ctx.beginPath();ctx.arc(hx,cy,r*.42,0,7);ctx.fill()}
+    if(k===0){ctx.fillStyle=cov?'#1a1330':'#fff';ctx.font='800 '+Math.round(r*.9)+'px "Baloo 2",sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('Th',hx,cy+1);ctx.textBaseline='alphabetic'}
+    if(kb&&KH[k]){const okk=!f||f[k]===KH[k];ctx.fillStyle=okk?'#2bd96b':'#ff4d4d';ctx.beginPath();ctx.arc(hx,cy,r*.5,0,7);ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke()}
+    // nombre de la nota a la derecha de su agujero
+    ctx.fillStyle=i===active?'#fff':COLORS[i];ctx.font='800 '+Math.min(rh*.55,Math.max(16,H*.045))+'px "Baloo 2",sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(NAMES[i],Wz-lab/2,cy+1);ctx.textBaseline='alphabetic';
+  }
+}
+// Xilófono: las teclas de abajo son las láminas; la nota a tocar se ilumina y la siguiente se marca con borde discontinuo
+function drawXyloKeys(x0,lw,H,hy,pad,v,active){
+  const L=[];
+  for(const n of notes){if(v&&n.v!==v)continue;if(n.s+n.d-.05>t){L.push(n.n);if(L.length>1)break}}
+  const tg=L.length?L[0]:-1,nx=L.length>1?L[1]:-1;
+  const zy=hy+12,zh=H-hy-20,cy=zy+zh/2,rad=Math.min(16,lw*.22),dr=Math.max(2.5,lw*.045);
+  ctx.fillStyle='#8a5a2b';
+  for(const dy of [-.3,.3])rr(x0+lw*.05,cy+dy*zh-4,lw*7.9,8,4);
+  for(let i=0;i<8;i++){
+    const x=x0+i*lw+pad,bh=zh*(1-i*.045),by=cy-bh/2,bw=lw-2*pad;
+    const pt=pressed[(v==='x'?'x':'s')+i],pr=pt&&performance.now()-pt<200,isT=i===tg,isN=i===nx;
+    ctx.globalAlpha=isT||pr?1:isN?.85:.5;
+    if(isT){ctx.shadowColor=COLORS[i];ctx.shadowBlur=26}
+    ctx.fillStyle=COLORS[i];rr(x,by,bw,bh,rad);
+    ctx.shadowBlur=0;ctx.globalAlpha=1;
+    ctx.fillStyle='rgba(26,19,48,.55)';
+    for(const dy of [-.3,.3]){ctx.beginPath();ctx.arc(x+bw/2,cy+dy*zh,dr,0,7);ctx.fill()}
+    if(isT||pr){ctx.strokeStyle='#fff';ctx.lineWidth=5;ctx.beginPath();ctx.roundRect(x,by,bw,bh,rad);ctx.stroke()}
+    else if(isN){ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.setLineDash([8,6]);ctx.beginPath();ctx.roundRect(x,by,bw,bh,rad);ctx.stroke();ctx.setLineDash([])}
+    ctx.fillStyle='#1a1330';ctx.font='800 '+Math.min(lw*.4,Math.max(16,H*.055))+'px "Baloo 2",sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(NAMES[i],x+bw/2,cy+4);ctx.textBaseline='alphabetic';
   }
 }
 function tag(txt,cx,col){
@@ -334,22 +428,23 @@ function tag(txt,cx,col){
 function draw(){
   upd();
   const W=cv.clientWidth,H=cv.clientHeight,hy=H*.8,ppb=hy/VIS;
-  ctx.clearRect(0,0,W,H);
+  ctx.clearRect(0,0,W,H);LAYH={on:false};
   const act=v=>{let a=-1;for(const n of notes)if((!v||n.v===v)&&t>=n.s-.15&&t<n.s+n.d-.05)a=n.n;return a};
   let active;
   if(duo){
-    const gw=duoGW(W),g=6,half=W/2,lw=(half-gw-g/2)/8,r0=half+g/2;
-    LAY={r0,lw,narrow:!gw};
+    const g=6,half=W/2,lw=(half-g/2)/8,lx=lw,r0=half+g/2;
+    LAY={r0,lw,lx,narrow:false};
     active=act('f');
-    highway(0,lw,H,hy,ppb,'f',active);
-    highway(r0,lw,H,hy,ppb,'x',act('x'));
+    hflute(half-g/2,H,'f',active);
+    highway(r0,lx,H,hy,ppb,'x',act('x'));
     ctx.fillStyle='rgba(8,6,20,.95)';ctx.fillRect(half-g/2,0,g,H);
     ctx.fillStyle='#ffd23f';ctx.fillRect(half-2,0,4,H);
-    if(gw){tag('FLAUTA',4*lw,'#ffd23f');tag('XILÓFONO',r0+4*lw,'#4dd2ff')}
+    tag('FLAUTA',LAYH.hx/2,'#ffd23f');
+    tag('XILÓFONO',r0+4*lx,'#4dd2ff');
     drawMic(W,H,hy,lw,active);
   }else{
     active=act();
-    highway(0,W/8,H,hy,ppb,null,active);
+    if($('inst').value==='f')hflute(W,H,null,active);else highway(0,W/8,H,hy,ppb,null,active);
     drawMic(W,H,hy,W/8,active);
   }
   if(playing||t<0){msg.textContent=t<0?(t<-3?'Prepárate…':Math.ceil(-t)):(!duo&&active>=0?NAMES[active]:'')}
@@ -445,7 +540,7 @@ $('load').onclick=()=>{
   if(![...$('song').options].some(o=>o.value==='Mi melodía')){const o=document.createElement('option');o.textContent='Mi melodía';$('song').appendChild(o)}
   $('song').value='Mi melodía';load();
 };
-$('inst').onchange=()=>{stopVoice();fi=-2;upd()};
+$('inst').onchange=()=>{stopVoice();fi=-2;size()};
 $('bpm').oninput=()=>$('bpmv').textContent=$('bpm').value;
 function showCover(){if(playing)$('play').click();$('cover').hidden=false;$('enter').focus()}
 function hideCover(){$('cover').hidden=true;try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();ac.resume()}catch(e){}size();document.activeElement&&document.activeElement.blur();if(kbEnabled())toast(KBHELP,8000)}
@@ -586,7 +681,7 @@ function drawMic(W,H,hy,lw,active){
   // nota que se oye: anillo blanco sobre su tecla
   if((mic&&heard>=0)||kbLane>=0){
     const l=kbLane>=0?kbLane:heard===0&&active===7?7:PC.indexOf(heard);
-    if(l>=0){ctx.strokeStyle='#fff';ctx.lineWidth=5;ctx.beginPath();ctx.roundRect(l*lw+3,hy+9,lw-6,H-hy-14,18);ctx.stroke()}
+    if(l>=0){ctx.strokeStyle='#fff';ctx.lineWidth=5;ctx.beginPath();if(LAYH.on)ctx.roundRect(LAYH.hx-LAYH.bw*.62,LAYH.ry0+(7-l)*LAYH.rh+3,LAYH.bw*1.24,LAYH.rh-6,14);else ctx.roundRect(l*lw+3,hy+9,lw-6,H-hy-14,18);ctx.stroke()}
   }
   // marcador
   ctx.save();ctx.translate(0,!duo?0:LAY.narrow?$('l1').parentNode.offsetHeight+8:44);
@@ -614,7 +709,7 @@ function drawMic(W,H,hy,lw,active){
   for(const p of pops){
     const a=(now-p.b)/900;ctx.globalAlpha=1-a;
     ctx.lineWidth=5;ctx.strokeStyle='#1a1330';
-    const x=Math.min(Math.max((p.r?LAY.r0:0)+p.l*lw+lw/2,lw),W-lw),y=hy-24-a*60;
+    const hf=!p.r&&LAYH.on,lq=p.r&&LAY.lx?LAY.lx:lw,x=hf?LAYH.hx-LAYH.bw*1.1:Math.min(Math.max((p.r?LAY.r0:0)+p.l*lq+lq/2,lw),W-lw),y=hf?LAYH.cy[p.l]-a*40:hy-24-a*60;
     ctx.strokeText(p.txt,x,y);ctx.fillStyle=p.col;ctx.fillText(p.txt,x,y);
   }
   ctx.globalAlpha=1;
@@ -642,9 +737,10 @@ function tap(l,right){
 }
 cv.addEventListener('pointerdown',e=>{
   const r=cv.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,W=r.width,H=r.height;
+  if(LAYH.on&&!duo){if(x>=LAYH.hx-LAYH.bw){e.preventDefault();tap(Math.max(0,Math.min(7,7-Math.floor((y-LAYH.ry0)/LAYH.rh))),false)}return}
   if(y<H*.6)return;
   e.preventDefault();
-  if(duo){if(x<LAY.r0||x>=LAY.r0+8*LAY.lw)return;tap(Math.min(7,Math.floor((x-LAY.r0)/LAY.lw)),true)}
+  if(duo){const lx=LAY.lx||LAY.lw;if(x<LAY.r0||x>=LAY.r0+8*lx)return;tap(Math.min(7,Math.floor((x-LAY.r0)/lx)),true)}
   else tap(Math.max(0,Math.min(7,Math.floor(x/(W/8)))),false);
 });
 $('inst').addEventListener('change',()=>{if($('inst').value==='x')toast('En una tablet puedes tocar con el dedo las teclas de colores de abajo.',5000)});
